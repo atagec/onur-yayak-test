@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "onur-yayak-test",
+	"webDir": "dist",
+	"bundledWebRuntime": false
+}

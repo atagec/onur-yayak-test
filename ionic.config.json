@@ -1,0 +1,8 @@
+{
+  "name": "onur-yayak-test",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue",
+  "id": "64613e4e"
+}
