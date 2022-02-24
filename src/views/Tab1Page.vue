@@ -31,26 +31,26 @@
             <ion-buttons slot="end">
               <!-- <ion-button onclick="dismissModal()">Close</ion-button> -->
               <ion-button @click="setOpen(false)">Close</ion-button>
-              <ion-button color="primary" @click="addUser()">Add</ion-button>
+              <ion-button color="primary" @click="addUser(name, total, current)">Add</ion-button>
             </ion-buttons>
           </ion-toolbar>
         </ion-header>
 
         <ion-item>
-          <ion-label position="stacked">Stacked Label</ion-label>
+          <ion-label position="stacked">Öğrenci Adı</ion-label>
           <!-- Input with placeholder -->
-          <ion-input placeholder="Enter Input" v-model="name"></ion-input>
+          <ion-input v-model="name"></ion-input>
         </ion-item>
         <ion-item>
-          <ion-label position="stacked">Stacked Label</ion-label>
+          <ion-label position="stacked">Toplam Ders Sayısı</ion-label>
           <!-- Input with clear button when there is a value -->
-          <ion-input placeholder="Enter Input" clear-input v-model="total"></ion-input>
+          <ion-input v-model="total"></ion-input>
         </ion-item>
         <ion-item>
-          <ion-label position="stacked">Stacked Label</ion-label>
+          <ion-label position="stacked">Kalan Ders Sayısı</ion-label>
 
           <!-- Number type input -->
-          <ion-input placeholder="Enter Input" clear-input v-model="current"></ion-input>
+          <ion-input v-model="current"></ion-input>
         </ion-item>
         <!-- <Modal :data="data"></Modal> -->
       </ion-modal>
@@ -65,7 +65,7 @@ import { defineComponent, ref, onMounted, reactive, toRefs, computed } from "vue
 import { add } from "ionicons/icons";
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonFab, IonFabButton, IonModal, IonInput } from "@ionic/vue";
 import ExploreContainer from "@/components/ExploreContainer.vue";
-import { getDocs, collection, doc, setDoc, getFirestore, serverTimestamp } from "firebase/firestore";
+import { getDocs, collection, doc, setDoc, getFirestore, serverTimestamp, addDoc, onSnapshot } from "firebase/firestore";
 
 import { auth, db } from "../main";
 
@@ -101,6 +101,7 @@ export default defineComponent({
     };
 
     const setUsers = (users: object) => {
+      console.log("users", users);
       state.users = users;
     };
 
@@ -111,28 +112,42 @@ export default defineComponent({
       setUsers(users);
     };
 
-    const addUser = async () => {
-      // console.log('addUser');
-      const firestore = getFirestore();
-
-      console.log("firestore", firestore);
-
-      // const { serverTimestamp } = firestore.FieldValue;
-      // const users = doc(firestore, "users");
-      // console.log('users', users)
-      // const newUser = {
-      //   name: "Ceyhun Atageç",
-      //   total: 20,
-      //   current: 20
-      // };
-      // setDoc(users, newUser);
-
-      await setDoc(doc(db, "users", "GS"), {
-        name: "Gözde Sezgin",
-        total: 20,
-        current: 20,
+    const addUser = async (name: string, total: number, current: number) => {
+      const docRef = await addDoc(collection(db, "users"), {
+        name: name,
+        total: total,
+        current: current,
         createdAt: serverTimestamp()
       });
+
+      const unsubscribe = onSnapshot(
+        collection(db, "users"),
+        querySnapshot => {
+          const usersPlaceholder = [] as any;
+
+          querySnapshot.forEach(doc => {
+            const data = doc.data() as any;
+
+            console.log("Current data: ", doc.data());
+
+            const id = docRef.id;
+            usersPlaceholder.push({
+              id: id,
+              ...data
+            });
+          });
+
+          setUsers(usersPlaceholder);
+        },
+        error => {
+          console.log("error", error);
+        }
+      );
+
+      // unsubscribe();
+      setOpen(false);
+
+      console.log("document written with ID", docRef.id);
     };
 
     const isOpenRef = ref(false);
