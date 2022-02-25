@@ -8,7 +8,7 @@
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
         <ion-toolbar>
-          <ion-title size="large">Tab 1</ion-title>
+          <ion-title size="large">Öğrenciler</ion-title>
         </ion-toolbar>
       </ion-header>
 
@@ -55,7 +55,7 @@
         <!-- <Modal :data="data"></Modal> -->
       </ion-modal>
 
-      <ExploreContainer name="Tab 1 page" />
+      <!-- <ExploreContainer name="Tab 1 page" /> -->
     </ion-content>
   </ion-page>
 </template>
@@ -71,7 +71,9 @@ import { auth, db } from "../main";
 
 export default defineComponent({
   name: "Tab1Page",
-  components: { ExploreContainer, IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonItem, IonLabel, IonFab, IonFabButton, IonModal, IonInput },
+  components: { 
+    // ExploreContainer, 
+  IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonItem, IonLabel, IonFab, IonFabButton, IonModal, IonInput },
   setup() {
     const state = reactive({
       name: "",
